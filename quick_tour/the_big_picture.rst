@@ -5,7 +5,7 @@ Commencez à utiliser Symfony2 en 10 minutes ! Ce tutoriel vous guidera à trave
 quelques-uns des concepts les plus importants de Symfony2 et explique
 comment démarrer rapidement en vous montrant un projet simple.
 
-Si vous avez déjà utilisé un framework web avant, vous devriez vous sentir à l'aise
+Si vous avez déjà utilisé un environnement de développement web (web framework) avant, vous devriez vous sentir à l'aise
 avec Symfony2. Sinon, bienvenue dans une toute nouvelle façon de développer des
 applications web !
 
@@ -17,54 +17,75 @@ applications web !
 Télécharger Symfony2
 --------------------
 
-Tout d'abord, vérifiez que vous avez installé et configuré un serveur web (comme
-Apache) avec PHP 5.3.4 ou supérieur.
+Pré-requis : Un serveur web fonctionnel (comme Apache, Nginx ou EmbedThis) avec PHP 5.3.4 ou supérieur.
 
 Vous êtes prêt ? Commencez par télécharger l' « `Édition Standard de Symfony2`_ »,
-une :term:`distribution` Symfony préconfigurée pour répondre à la plupart des besoins,
-et qui contient également du code expliquant comment fonctionne Symfony2
-(téléchargez l'archive avec les *vendors* pour gagner encore plus de temps).
+une :term:`distribution` Symfony préconfigurée pour répondre à la plupart des besoins.
 
-Après avoir décompressé l'archive dans la racine de votre serveur web, vous devriez
-avoir un répertoire ``Symfony/`` qui ressemble à :
+Obtenez l'installateur officiel Symfony
+
+Depuis un terminal, utilisez la ligne de commande suivante pour télécharger l'installateur Symfony. 
+Celui-ci va vous faciliter la vie pour créer rapidemment un projet Symfony fonctionnel :
+
+Windows
+
+Rendez-vous dans l'invite de commande Windows.
+
+Remarque : le programme php.exe doit être accessible, donc dans la variable d'environnement PATH.
+.. code-block:: text
+    C:\php -r "readfile('https://symfony.com/installer');" > symfony
+
+Ceci créé le fichier symfony, qui va permettre l'installation de projets Symfony.
+
+Utilisation de l'installateur :
+.. code-block:: text
+    C:\mkdir projets
+    C:\move symfony projets
+    C:\cd projets
+
+L'installateur se trouve maintenant à la racine du dossier projets.
 
 .. code-block:: text
+    C:\projets\php symfony new mon_projet
 
-    www/ <- votre répertoire racine
-        Symfony/ <- l'archive décompressée
-            app/
-                cache/
-                config/
-                logs/
-                Resources/
-            bin/
-            src/
-                Acme/
-                    DemoBundle/
-                        Controller/
-                        Resources/
-                        ...
-            vendor/
-                symfony/
-                doctrine/
-                ...
-            web/
-                app.php
-                ...
-
+Ceci créé un nouveau dossier mon_projet qui contient une toute nouvelle installation de la dernière version stable de Symfony. De plus, l'installateur vérifie que votre système est conforme aux exigences techniques pour faire fonctionner les applications Symfony. Sinon, une liste de changements à apporter est affichée. 
 
 .. note::
+
+Si l'installateur n'affiche rien, veuillez vérifier que l'extension PHP Phar est installée et activée sur l'ordinateur.
+
+Installer un projet avec une version spécifique de Symfony
+----------------------------------------------------------
+
+Si votre projet nécessite une version particulière de Symfony, vous pouvez utiliser l'argument supplémentaire de version de la commande new.
+
+.. code-block:: text
+    # Installe la plus récente version dans toute branche Symfony
+    C:\projets\php symfony new mon_nouveau_projet 2.8
+    C:\projets\php symfony new mon_nouveau_projet 3.1
+
+    # Installe une version spécifique de symfony
+    C:\projets\php symfony new mon_nouveau_projet 2.8.1
+    C:\projets\php symfony new mon_nouveau_projet 3.0.2
+
+    # Utiliser une version beta ou RC
+    C:\projets\php symfony new mon_projet 3.0.0-BETA1
+    C:\projets\php symfony new mon_projet 3.1.0-RC1
+
+L'installateur possède également une commande lts qui installe la dernière version stable supportée par la communauté à long terme. LTS : Long Term Support, support à long terme :
+
+.. code-block:: text
+     C:\projets\php symfony new mon_projet lts
+
+Veuillez lire la page :doc:`Processus de sortie des versions </contributing/community/releases>` pour mieux comprendre pourquoi il existe plusieurs versions de Symfony et laquelle utiliser pour vos projets.
 
     Si vous êtes familier avec Composer, vous pouvez exécuter la commande suivante
     plutôt que de télécharger l'archive :
 
     .. code-block:: bash
 
-        $ composer.phar create-project symfony/framework-standard-edition path/to/install dev-master
-
-        # supprime l'historique de Git
-        $ rm -rf .git
-
+        $ composer.phar create-project symfony/framework-standard-edition dossier/installation dev-master
+        
     Pour une version exacte, remplacez `dev-master` par la dernière version de
     Symfony (ex : 2.4.4). Pour plus de détails, lisez `Installation de Symfony`_
     
