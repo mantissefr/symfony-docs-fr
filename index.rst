@@ -60,10 +60,10 @@ Trouvez rapidement des réponses à vos questions avec les documents de référe
 
 .. include:: /reference/map.rst.inc
 
-Bundles
+Paquetages
 -------
 
-L'Edition Standard de Symfony est livrée avec quelques bundles.
+L'Edition Standard de Symfony est livrée avec quelques paquetages.
 Apprenez-en plus à propos d'eux :
 
 .. toctree::
