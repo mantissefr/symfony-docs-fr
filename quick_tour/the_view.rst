@@ -17,20 +17,21 @@ Découvrir Twig
 
 .. tip::
 
-    Si vous voulez maîtriser Twig, il est fortement recommandé de lire la
-    `documentation`_ officielle. Cette section est juste un rapide aperçu des
+   La `documentation`_ officielle de Twig est le meilleur endroit pour approfondir ses connaissances de ce moteur de rendu. Cette section est juste un rapide aperçu des
     concepts de base.
 
-Un template Twig est un fichier texte qui peut générer n'importe quel type de
-contenu (HTML, XML, CSV, LaTeX, ...). Twig définit deux sortes de délimiteurs :
+Un gabarit Twig (template) est un fichier texte qui peut générer n'importe quel type de
+contenu (HTML, CSS, Javascript, XML, CSV, LaTeX, ...). Les éléments Twig sont séparés du reste du contenu du gabarit par ces délimiteurs :
 
-* ``{{ ... }}``: Affiche une variable ou le résultat d'une expression.
+* ``{{ ... }}``: Affiche une variable ou le résultat de l'évaluation d'une expression.
 
-* ``{% ... %}``: Contrôle la logique du template; il est utilisé pour éxécuter des
-  boucles ``for`` et des conditions ``if``, entre autres.
+* ``{% ... %}``: Contrôle la logique du gabarit; il est utilisé pour éxécuter des
+  boucles ``for`` et des déclarations ``if``, entre autres.
+  
+* ``{# ... #}``: Permet d'inclure des commentaires dans les gabarits. Contrairement au langage HTML, les commentaires ne sont pas inclus dans le rendu du gabarit.
 
 Ci-dessous un template minimal qui illustre quelques bases; en utilisant deux
-variables ``page_title`` et ``navigation``, qui ont été passées au template :
+variables ``page_title`` et ``navigation``, qui ont été passées au gabarit :
 
 .. code-block:: html+jinja
 
@@ -44,20 +45,15 @@ variables ``page_title`` et ``navigation``, qui ont été passées au template :
 
             <ul id="navigation">
                 {% for item in navigation %}
-                    <li><a href="{{ item.href }}">{{ item.caption }}</a></li>
+                    <li><a href="{{ item.href }}">{{ item.label }}</a></li>
                 {% endfor %}
             </ul>
         </body>
     </html>
 
 
-.. tip::
-
-   Des commentaires peuvent être inclus dans le template en utilisant le
-   délimiteur ``{# ... #}``.
-
-Pour rendre un template dans Symfony, utilisez la méthode ``render`` depuis un 
-contrôleur et passez toutes les variables requises par le template :
+Pour interpréter un gabarit dans Symfony, utilisez la méthode ``render`` depuis un 
+contrôleur et passez toutes les variables requises par le gabarit :
 
 .. code-block:: php
 
@@ -65,9 +61,9 @@ contrôleur et passez toutes les variables requises par le template :
         'name' => $name,
     ));
 
-Les variables passées à un template peuvent être des chaînes de caractères, des
+Les variables passées à un gabarit peuvent être des chaînes de caractères, des
 tableaux ou même des objets. Twig les gère de la même manière et vous permet
-d'accéder aux « attributs » d'une variable grâce à la notation (``.``) :
+d'accéder aux « attributs » d'une variable grâce à la notation « point » (``.``) :
 
 .. code-block:: jinja
 
@@ -77,18 +73,18 @@ d'accéder aux « attributs » d'une variable grâce à la notation (``.``) :
     {# array('user' => array('name' => 'Fabien')) #}
     {{ user.name }}
 
-    {# force array lookup #}
+    {# force la consultation du tableau #}
     {{ user['name'] }}
 
     {# array('user' => new User('Fabien')) #}
     {{ user.name }}
     {{ user.getName }}
 
-    {# force method name lookup #}
+    {# force la consultation de méthode #}
     {{ user.name() }}
     {{ user.getName() }}
 
-    {# pass arguments to a method #}
+    {# transmettre des paramètres à une méthode #}
     {{ user.date('Y-m-d') }}
 
 .. note::
@@ -97,51 +93,47 @@ d'accéder aux « attributs » d'une variable grâce à la notation (``.``) :
     mais de son affichage. Si vous accéder à une variable dans un tag, ne mettez
     pas d'accolades autour.
 
-Templates de décoration
------------------------
+Architecture de gabarits
+------------------------
 
-Bien souvent, les templates d'un projet partagent des éléments communs, comme les
-célèbres entête et pied de page. Dans Symfony2, ce problème est vu différemment : 
-un template peut être décoré par un autre. Cela fonctionne exactement
-comme les classes PHP : l'héritage de template vous permet de bâtir un template
-« layout » de base qui contient tous les éléments communs de votre site et de définir
-des « blocks » que les templates enfants pourront surcharger.
+Bien souvent, les gabarits d'un projet partagent des éléments communs, comme les
+célèbres en-têtes et pieds de page. Twig résoud ce problème élégamment avec le concept d' « héritage de gabarit ». Cela fonctionne exactement
+comme les classes PHP : l'héritage de gabarit vous permet de définir un gabarit
+de base qui contiendra tous les éléments communs de votre site puis d'inclure
+des « blocs » de contenu que les gabarits enfants pourront surcharger.
 
-Le template ``hello.html.twig`` hérite du template ``layout.html.twig``, grâce au
-tag ``extends`` :
+Le template ``index.html.twig`` hérite du template ``base.html.twig``, grâce à la balise ``extends`` :
 
 .. code-block:: html+jinja
 
-    {# src/Acme/DemoBundle/Resources/views/Demo/hello.html.twig #}
-    {% extends "AcmeDemoBundle::layout.html.twig" %}
-
-    {% block title "Hello " ~ name %}
+    {# app/Resources/views/index.html.twig #}
+    {% extends "base.html.twig" %}
 
     {% block content %}
-        <h1>Hello {{ name }}!</h1>
+        <h1>Bienvenu sur Symfony!</h1>
     {% endblock %}
 
-La notation ``AcmeDemoBundle::layout.html.twig`` vous semble familière, n'est-ce pas ?
-C'est la même notation utilisée pour référencer un template classique. La partie
-``::`` signifie simplement que le contrôleur est vide, et donc que le fichier
-correspondant est directement stocké dans le répertoire ``Resources/views/``.
-
-Maintenant, jettons à un oeil à un exemple simple du template ``layout.html.twig`` :
+Maintenant, jettons à un oeil à un exemple simple du template ``base.html.twig`` :
 
 .. code-block:: jinja
 
-    {# src/Acme/DemoBundle/Resources/views/layout.html.twig #}
-    <div class="symfony-content">
-        {% block content %}
-        {% endblock %}
-    </div>
+    {# app/Resources/views/base.html.twig #}
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8" />
+            <title>{% block title %}Welcome!{% endblock %}</title>
+            {% block stylesheets %}{% endblock %}
+            <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        </head>
+        <body>
+            {% block body %}{% endblock %}
+            {% block javascripts %}{% endblock %}
+        </body>
+    </html>
 
-Le tag ``{% block %}`` définit des blocs que les templates enfants vont pouvoir remplir.
-Tout ce que le tag block fait est de spécifier au moteur de template qu'un template
-enfant va surcharger cette partie du template.
-
-Dans cet exemple, le template ``hello.html.twig`` surcharge le block ``content``,
-ce qui signifie que le texte « Hello Fabien » sera affiché dans l'élément ``div.symfony-content``.
+La balise ``{% block %}`` définit des blocs que les gabarits enfants vont pouvoir surcharger.
+Dans cet exemple, le gabarit index.html.twig surcharge le block ``body``, mais pas le bloc ``title``, qui affichera le contenu par défaut défini dans le gabarit ``base.html.twig``.
 
 Utiliser les tags, les filtres et les fonctions
 -----------------------------------------------
